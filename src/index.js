@@ -17,16 +17,21 @@ app.use(express.static(publicDirectoryPath));
 // server(emit)  --> client(receive)  countUpdated
 // client(emit) --> server(receive)  increment
 
-// socket.emit --> Send message to one client.
-// socket.broadcast.emit -> sends message to everyone except one sending it.
-
-// io.emit --> send messages to everyone.
+// socket.emit --> Sends an event to specific client.
+// io.emit --> sends an event to every connected client
+// io.to.emit --> emits an event to everybody in a specific chat room.
+// socket.broadcast.emit -> sends event to every connected client, except one client sending it.
+// socket.broadcast.to.emit --> same as above and specific to chat room
 
 io.on('connection', (socket) => {
   console.log('New web socket connection');
 
-  socket.emit('message', generateMessage('Welcome!'));
-  socket.broadcast.emit('message', generateMessage('A new user has joined!'));
+  socket.on('join', ({ username, room }) => {
+    socket.join(room);
+
+    socket.emit('message', generateMessage('Welcome!'));
+    socket.broadcast.to(room).emit('message', generateMessage(`${username} has joined!`));
+  });
 
   socket.on('sendMessage', (message, callback) => {
     const filter = new Filter()
@@ -34,7 +39,7 @@ io.on('connection', (socket) => {
       return callback('Profanity is not allowed!');
     }
 
-    io.emit('message', generateMessage(message));
+    io.to('first').emit('message', generateMessage(message));
     callback();
   });
 
