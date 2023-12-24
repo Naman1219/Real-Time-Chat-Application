@@ -28,7 +28,6 @@ io.on('connection', (socket) => {
   console.log('New web socket connection');
   socket.on('join', (options, callback) => {
     const { error, user } = addUser({ id: socket.id, ...options })
-
     if (error) {
       return callback(error);
     }
@@ -40,7 +39,6 @@ io.on('connection', (socket) => {
       room: user.room,
       users: getUsersInRoom(user.room)
     });
-
     callback();
   });
 
