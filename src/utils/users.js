@@ -1,4 +1,5 @@
 const users = [];
+
 // addUser, removeUser, getUser, getUsersInRoom:
 
 const addUser = ({ id, username, room }) => {
@@ -12,6 +13,7 @@ const addUser = ({ id, username, room }) => {
       error: 'Username and room are required!'
     }
   }
+
   // Check for existing user:
   const existingUser = users.find((user) => {
     return user.room === room && user.username === username
@@ -35,6 +37,7 @@ const removeUser = (id) => {
   if (index !== -1) {
     return users.splice(index, 1)[0];
   }
+
 };
 
 const getUser = (id) => {
